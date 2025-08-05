@@ -237,7 +237,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
           Add Task
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>Add a new task</DialogTitle>
           <DialogDescription>
@@ -246,8 +246,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ScrollArea className="h-[65vh] pr-4">
-              <div className="space-y-4 pl-1 pr-1">
+            <ScrollArea className="h-[65vh] pr-6">
+              <div className="space-y-4">
                 <FormField
                   control={form.control}
                   name="title"
@@ -301,7 +301,6 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     )}
                   />
                   {taskType === 'scheduled' ? (
-                    <>
                       <FormField
                         control={form.control}
                         name="dueDate"
@@ -314,16 +313,16 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                                   <Button
                                     variant={'outline'}
                                     className={cn(
-                                      'w-full pl-3 text-left font-normal',
+                                      'w-full justify-start text-left font-normal',
                                       !field.value && 'text-muted-foreground'
                                     )}
                                   >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
                                     {field.value ? (
                                       format(field.value, 'PPP')
                                     ) : (
                                       <span>Pick a date</span>
                                     )}
-                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                   </Button>
                                 </FormControl>
                               </PopoverTrigger>
@@ -343,56 +342,25 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                           </FormItem>
                         )}
                       />
-                      <div className="md:col-span-2">
-                         <FormField
-                          control={form.control}
-                          name="startTime"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Start Time (Optional)</FormLabel>
-                              <FormControl>
-                                <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                     </div>
-                    </>
-                  ) : (
-                    <FormField
+                  ) : null}
+                </div>
+                 {taskType === 'scheduled' && (
+                   <div className="grid grid-cols-1">
+                      <FormField
                       control={form.control}
-                      name="dueDate"
+                      name="startTime"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Due Date</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant={'outline'}
-                                  className={cn(
-                                    'w-full pl-3 text-left font-normal',
-                                    !field.value && 'text-muted-foreground'
-                                  )}
-                                  disabled
-                                >
-                                  {field.value ? (
-                                    format(field.value, 'PPP')
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                          </Popover>
+                          <FormLabel>Start Time (Optional)</FormLabel>
+                          <FormControl>
+                            <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  )}
-                </div>
+                   </div>
+                 )}
                 
                 <div className="space-y-2">
                   <Label>Subtasks</Label>
@@ -547,7 +515,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-6 border-t mt-4 pr-1">
+            <DialogFooter className="pt-6 border-t mt-4">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
@@ -557,3 +525,5 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
     </Dialog>
   );
 }
+
+    
