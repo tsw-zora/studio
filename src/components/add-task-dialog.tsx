@@ -247,7 +247,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <ScrollArea className="h-[65vh]">
-              <div className="space-y-4 pr-6">
+              <div className="space-y-4 px-6">
                 <FormField
                   control={form.control}
                   name="title"
@@ -515,7 +515,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-6 border-t mt-4 pr-6">
+            <DialogFooter className="pt-6 border-t mt-4">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
