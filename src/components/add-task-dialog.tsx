@@ -237,7 +237,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
           Add Task
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>Add a new task</DialogTitle>
           <DialogDescription>
@@ -246,8 +246,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ScrollArea className="h-[65vh]" forceMount>
-              <div className="space-y-4 px-6">
+            <ScrollArea className="h-[65vh] pr-4">
+              <div className="space-y-4 pl-1 pr-1">
                 <FormField
                   control={form.control}
                   name="title"
@@ -300,50 +300,50 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="dueDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Due Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant={'outline'}
-                                className={cn(
-                                  'w-full pl-3 text-left font-normal',
-                                  !field.value && 'text-muted-foreground'
-                                )}
-                                disabled={taskType !== 'scheduled'}
-                              >
-                                {field.value ? (
-                                  format(field.value, 'PPP')
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              disabled={(date) =>
-                                date < new Date(new Date().setHours(0, 0, 0, 0)) || taskType !== 'scheduled'
-                              }
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                   {taskType === 'scheduled' && (
-                     <div className="md:col-span-2">
+                  {taskType === 'scheduled' ? (
+                    <>
+                      <FormField
+                        control={form.control}
+                        name="dueDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Due Date</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant={'outline'}
+                                    className={cn(
+                                      'w-full pl-3 text-left font-normal',
+                                      !field.value && 'text-muted-foreground'
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, 'PPP')
+                                    ) : (
+                                      <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) =>
+                                    date < new Date(new Date().setHours(0, 0, 0, 0))
+                                  }
+                                  initialFocus
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="md:col-span-2">
                          <FormField
                           control={form.control}
                           name="startTime"
@@ -351,13 +351,46 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                             <FormItem>
                               <FormLabel>Start Time (Optional)</FormLabel>
                               <FormControl>
-                                <Input type="time" {...field} value={field.value ?? ''} />
+                                <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                      </div>
+                    </>
+                  ) : (
+                    <FormField
+                      control={form.control}
+                      name="dueDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Due Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={'outline'}
+                                  className={cn(
+                                    'w-full pl-3 text-left font-normal',
+                                    !field.value && 'text-muted-foreground'
+                                  )}
+                                  disabled
+                                >
+                                  {field.value ? (
+                                    format(field.value, 'PPP')
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   )}
                 </div>
                 
@@ -514,7 +547,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-6 border-t mt-4 px-6">
+            <DialogFooter className="pt-6 border-t mt-4 pr-1">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
