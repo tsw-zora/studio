@@ -236,7 +236,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
           Add Task
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-lg">
+      <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>Add a new task</DialogTitle>
           <DialogDescription>
@@ -245,7 +245,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ScrollArea className="h-[60vh] pr-6">
+            <ScrollArea className="h-[65vh] pr-6">
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -277,7 +277,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="type"
@@ -341,20 +341,22 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                       </FormItem>
                     )}
                   />
-                  {taskType === 'scheduled' && (
-                     <FormField
-                      control={form.control}
-                      name="startTime"
-                      render={({ field }) => (
-                        <FormItem className="col-span-2">
-                          <FormLabel>Start Time (Optional)</FormLabel>
-                          <FormControl>
-                            <Input type="time" {...field} value={field.value ?? ''} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                   {taskType === 'scheduled' && (
+                     <div className="md:col-span-2">
+                         <FormField
+                          control={form.control}
+                          name="startTime"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Start Time (Optional)</FormLabel>
+                              <FormControl>
+                                <Input type="time" {...field} value={field.value ?? ''} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                     </div>
                   )}
                 </div>
                 
@@ -456,7 +458,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                         />
 
                         {isRecurring && (
-                          <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 border rounded-lg">
                             <FormField
                               control={form.control}
                               name="recurringInterval"
@@ -511,7 +513,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-4">
+            <DialogFooter className="pt-6 border-t mt-4">
+              <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
           </form>
