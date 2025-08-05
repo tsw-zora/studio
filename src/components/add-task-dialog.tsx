@@ -15,6 +15,7 @@ import {
   Repeat,
   Image as ImageIcon,
   X,
+  ChevronDown,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -51,12 +52,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Calendar } from '@/components/ui/calendar';
 import { useToast } from '@/hooks/use-toast';
 import { getAISubtaskSuggestions } from '@/app/actions';
 import type { Task } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Switch } from './ui/switch';
+import { Separator } from './ui/separator';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -256,25 +263,6 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
               )}
             />
 
-            <div className="space-y-2">
-                <Label>Image (Optional)</Label>
-                <div className="flex items-center gap-2">
-                    <Input id="image-upload" type="file" accept="image/*" onChange={handleImageChange} className="flex-1" ref={fileInputRef} />
-                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
-                        <ImageIcon className="mr-2 h-4 w-4" />
-                        Upload
-                    </Button>
-                </div>
-                {imagePreview && (
-                    <div className="relative mt-2">
-                        <Image src={imagePreview} alt="Image preview" width={100} height={100} className="rounded-md object-cover" />
-                        <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={removeImage}>
-                            <X className="h-4 w-4" />
-                        </Button>
-                    </div>
-                )}
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
@@ -338,80 +326,6 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 )}
               />
             </div>
-
-            <FormField
-              control={form.control}
-              name="isRecurring"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                  <div className="space-y-0.5">
-                    <FormLabel>Recurring Task</FormLabel>
-                    <DialogDescription>
-                      Does this task need to be repeated?
-                    </DialogDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            {isRecurring && (
-              <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
-                <FormField
-                  control={form.control}
-                  name="recurringInterval"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Interval</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="e.g., 30" {...field} value={field.value ?? ''} />
-                      </FormControl>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="recurringIntervalUnit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Unit</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select unit" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="minutes">Minutes</SelectItem>
-                          <SelectItem value="hours">Hours</SelectItem>
-                           <SelectItem value="days">Days</SelectItem>
-                        </SelectContent>
-                      </Select>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                 <FormField
-                  control={form.control}
-                  name="repetitions"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Repetitions</FormLabel>
-                      <FormControl>
-                        <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ''} />
-                      </FormControl>
-                       <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
             
             <div className="space-y-2">
               <Label>Subtasks</Label>
@@ -460,6 +374,110 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 ))}
               </div>
             </div>
+
+            <Collapsible>
+                <CollapsibleTrigger asChild>
+                    <Button variant="ghost" className="w-full flex justify-center items-center gap-2 text-sm text-muted-foreground">
+                        <Separator className="flex-1" />
+                        <span>Advanced Options</span>
+                        <ChevronDown className="h-4 w-4 transition-transform data-[state=open]:rotate-180" />
+                        <Separator className="flex-1" />
+                    </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-4 pt-4">
+                    <div className="space-y-2">
+                        <Label>Image (Optional)</Label>
+                        <div className="flex items-center gap-2">
+                            <Input id="image-upload" type="file" accept="image/*" onChange={handleImageChange} className="flex-1" ref={fileInputRef} />
+                            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                                <ImageIcon className="mr-2 h-4 w-4" />
+                                Upload
+                            </Button>
+                        </div>
+                        {imagePreview && (
+                            <div className="relative mt-2">
+                                <Image src={imagePreview} alt="Image preview" width={100} height={100} className="rounded-md object-cover" />
+                                <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={removeImage}>
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                     <FormField
+                      control={form.control}
+                      name="isRecurring"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                          <div className="space-y-0.5">
+                            <FormLabel>Recurring Task</FormLabel>
+                            <DialogDescription>
+                              Does this task need to be repeated?
+                            </DialogDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {isRecurring && (
+                      <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
+                        <FormField
+                          control={form.control}
+                          name="recurringInterval"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Interval</FormLabel>
+                              <FormControl>
+                                <Input type="number" placeholder="e.g., 30" {...field} value={field.value ?? ''} />
+                              </FormControl>
+                               <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                         <FormField
+                          control={form.control}
+                          name="recurringIntervalUnit"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Unit</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select unit" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="minutes">Minutes</SelectItem>
+                                  <SelectItem value="hours">Hours</SelectItem>
+                                   <SelectItem value="days">Days</SelectItem>
+                                </SelectContent>
+                              </Select>
+                               <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                         <FormField
+                          control={form.control}
+                          name="repetitions"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Repetitions</FormLabel>
+                              <FormControl>
+                                <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ''} />
+                              </FormControl>
+                               <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                </CollapsibleContent>
+            </Collapsible>
 
             <DialogFooter>
               <Button type="submit">Save Task</Button>
