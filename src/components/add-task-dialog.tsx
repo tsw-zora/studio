@@ -303,7 +303,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     control={form.control}
                     name="dueDate"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col">
+                      <FormItem>
                         <FormLabel>Due Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
@@ -341,14 +341,12 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                       </FormItem>
                     )}
                   />
-                </div>
-                {taskType === 'scheduled' && (
-                  <div className="grid grid-cols-2 gap-4">
+                  {taskType === 'scheduled' && (
                      <FormField
                       control={form.control}
                       name="startTime"
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="col-span-2">
                           <FormLabel>Start Time (Optional)</FormLabel>
                           <FormControl>
                             <Input type="time" {...field} value={field.value ?? ''} />
@@ -357,8 +355,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                         </FormItem>
                       )}
                     />
-                  </div>
-                )}
+                  )}
+                </div>
                 
                 <div className="space-y-2">
                   <Label>Subtasks</Label>
