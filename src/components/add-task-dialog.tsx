@@ -303,7 +303,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     control={form.control}
                     name="dueDate"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col pt-1.5">
+                      <FormItem className="flex flex-col">
                         <FormLabel>Due Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
@@ -344,7 +344,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </div>
                 {taskType === 'scheduled' && (
                   <div className="grid grid-cols-2 gap-4">
-                    <FormField
+                     <FormField
                       control={form.control}
                       name="startTime"
                       render={({ field }) => (
