@@ -18,18 +18,20 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const stableInitialValue = useMemo(() => initialValue, []);
   
   useEffect(() => {
     if (isMounted) {
       try {
         const item = window.localStorage.getItem(key);
-        setStoredValue(item ? JSON.parse(item) : initialValue);
+        setStoredValue(item ? JSON.parse(item) : stableInitialValue);
       } catch (error) {
         console.error(error);
-        setStoredValue(initialValue);
+        setStoredValue(stableInitialValue);
       }
     }
-  }, [isMounted, key, initialValue]);
+  }, [isMounted, key, stableInitialValue]);
 
   useEffect(() => {
     if (isMounted) {
