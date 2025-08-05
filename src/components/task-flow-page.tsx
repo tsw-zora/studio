@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { isPast } from 'date-fns';
-import { TaskFlowLogo } from '@/components/task-flow-logo';
+import { DoITLogo } from '@/components/doit-logo';
 import { Button } from '@/components/ui/button';
 import { AddTaskDialog } from '@/components/add-task-dialog';
 import { TaskList } from '@/components/task-list';
@@ -173,9 +173,9 @@ export function TaskFlowPage() {
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b">
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <TaskFlowLogo className="h-7 w-7 text-primary" />
+            <DoITLogo className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold font-headline text-foreground">
-              TaskFlow
+              DoIT
             </h1>
           </div>
           <div className="flex items-center gap-2">
