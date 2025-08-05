@@ -13,4 +13,8 @@ export interface Task {
   completed: boolean;
   completedAt?: string;
   subtasks: Subtask[];
+  isRecurring?: boolean;
+  recurringInterval?: number;
+  recurringIntervalUnit?: 'minutes' | 'hours' | 'days';
+  repetitions?: number;
 }

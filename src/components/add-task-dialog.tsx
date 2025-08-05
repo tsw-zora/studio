@@ -12,6 +12,7 @@ import {
   Sparkles,
   Trash2,
   Loader2,
+  Repeat,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -52,6 +53,7 @@ import { useToast } from '@/hooks/use-toast';
 import { getAISubtaskSuggestions } from '@/app/actions';
 import type { Task } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { Switch } from './ui/switch';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required.'),
@@ -60,6 +62,10 @@ const formSchema = z.object({
     required_error: 'Task type is required.',
   }),
   dueDate: z.date().optional(),
+  isRecurring: z.boolean().default(false),
+  recurringInterval: z.coerce.number().optional(),
+  recurringIntervalUnit: z.enum(['minutes', 'hours', 'days']).optional(),
+  repetitions: z.coerce.number().optional(),
 });
 
 type AddTaskFormValues = z.infer<typeof formSchema>;
@@ -80,10 +86,12 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
     defaultValues: {
       title: '',
       description: '',
+      isRecurring: false,
     },
   });
 
   const taskType = form.watch('type');
+  const isRecurring = form.watch('isRecurring');
 
   const handleSuggestSubtasks = async () => {
     const description = form.getValues('description');
@@ -127,6 +135,21 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         message: 'Due date is required for scheduled tasks.',
       });
       return;
+    }
+
+    if (values.isRecurring) {
+      if (!values.recurringInterval) {
+        form.setError('recurringInterval', { type: 'manual', message: 'Required' });
+        return;
+      }
+      if (!values.recurringIntervalUnit) {
+        form.setError('recurringIntervalUnit', { type: 'manual', message: 'Required' });
+        return;
+      }
+      if (!values.repetitions) {
+        form.setError('repetitions', { type: 'manual', message: 'Required' });
+        return;
+      }
     }
 
     const finalSubtasks = subtasks.map((title) => ({
@@ -260,6 +283,80 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="isRecurring"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Recurring Task</FormLabel>
+                    <DialogDescription>
+                      Does this task need to be repeated?
+                    </DialogDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {isRecurring && (
+              <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg">
+                <FormField
+                  control={form.control}
+                  name="recurringInterval"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Interval</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="e.g., 30" {...field} />
+                      </FormControl>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="recurringIntervalUnit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Unit</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select unit" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="minutes">Minutes</SelectItem>
+                          <SelectItem value="hours">Hours</SelectItem>
+                           <SelectItem value="days">Days</SelectItem>
+                        </SelectContent>
+                      </Select>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 <FormField
+                  control={form.control}
+                  name="repetitions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Repetitions</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="e.g., 5" {...field} />
+                      </FormControl>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
             
             <div className="space-y-2">
               <Label>Subtasks</Label>

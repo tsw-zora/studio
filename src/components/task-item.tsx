@@ -152,7 +152,7 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
         )}
       </CardContent>
       <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {task.type === 'daily' ? (
             <Badge variant="secondary" className="gap-1">
               <Repeat className="h-3 w-3" /> Daily
@@ -164,6 +164,12 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
             </Badge>
           )}
           {isOverdue && <Badge variant="destructive">Overdue</Badge>}
+          {task.isRecurring && (
+             <Badge variant="outline" className="gap-1">
+                <Repeat className="h-3 w-3" />
+                Repeats every {task.recurringInterval} {task.recurringIntervalUnit} ({task.repetitions} times)
+            </Badge>
+          )}
         </div>
         {task.completed && task.completedAt ? (
           <div className="flex items-center gap-1">
