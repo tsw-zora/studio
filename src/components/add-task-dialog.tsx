@@ -246,8 +246,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <ScrollArea className="h-[65vh] pr-6">
-              <div className="space-y-4">
+            <ScrollArea className="h-[65vh]">
+              <div className="space-y-4 pr-6">
                 <FormField
                   control={form.control}
                   name="title"
@@ -277,91 +277,91 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     </FormItem>
                   )}
                 />
-
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="type"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select task type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="scheduled">Scheduled</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {taskType === 'scheduled' ? (
-                      <FormField
-                        control={form.control}
-                        name="dueDate"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Due Date</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant={'outline'}
-                                    className={cn(
-                                      'w-full justify-start text-left font-normal',
-                                      !field.value && 'text-muted-foreground'
-                                    )}
-                                  >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {field.value ? (
-                                      format(field.value, 'PPP')
-                                    ) : (
-                                      <span>Pick a date</span>
-                                    )}
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                  mode="single"
-                                  selected={field.value}
-                                  onSelect={field.onChange}
-                                  disabled={(date) =>
-                                    date < new Date(new Date().setHours(0, 0, 0, 0))
-                                  }
-                                  initialFocus
-                                />
-                              </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                  ) : null}
-                </div>
-                 {taskType === 'scheduled' && (
-                   <div className="grid grid-cols-1">
-                      <FormField
+                    <FormField
                       control={form.control}
-                      name="startTime"
+                      name="type"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Start Time (Optional)</FormLabel>
-                          <FormControl>
-                            <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
-                          </FormControl>
+                          <FormLabel>Type</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select task type" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="daily">Daily</SelectItem>
+                              <SelectItem value="scheduled">Scheduled</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                   </div>
-                 )}
-                
+                    {taskType === 'scheduled' ? (
+                        <FormField
+                          control={form.control}
+                          name="dueDate"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Due Date</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant={'outline'}
+                                      className={cn(
+                                        'w-full justify-start text-left font-normal',
+                                        !field.value && 'text-muted-foreground'
+                                      )}
+                                    >
+                                      <CalendarIcon className="mr-2 h-4 w-4" />
+                                      {field.value ? (
+                                        format(field.value, 'PPP')
+                                      ) : (
+                                        <span>Pick a date</span>
+                                      )}
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                  <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) =>
+                                      date < new Date(new Date().setHours(0, 0, 0, 0))
+                                    }
+                                    initialFocus
+                                  />
+                                </PopoverContent>
+                              </Popover>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                    ) : null}
+                  </div>
+                   {taskType === 'scheduled' && (
+                     <div className="grid grid-cols-1">
+                        <FormField
+                        control={form.control}
+                        name="startTime"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Start Time (Optional)</FormLabel>
+                            <FormControl>
+                              <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                     </div>
+                   )}
+
                 <div className="space-y-2">
                   <Label>Subtasks</Label>
                   <div className="flex gap-2">
@@ -515,7 +515,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-6 border-t mt-4">
+            <DialogFooter className="pt-6 border-t mt-4 pr-6">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
