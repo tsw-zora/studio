@@ -87,6 +87,9 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
       title: '',
       description: '',
       isRecurring: false,
+      recurringInterval: undefined,
+      recurringIntervalUnit: undefined,
+      repetitions: undefined,
     },
   });
 
@@ -314,7 +317,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     <FormItem>
                       <FormLabel>Interval</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 30" {...field} />
+                        <Input type="number" placeholder="e.g., 30" {...field} value={field.value ?? ''} />
                       </FormControl>
                        <FormMessage />
                     </FormItem>
@@ -349,7 +352,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     <FormItem>
                       <FormLabel>Repetitions</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="e.g., 5" {...field} />
+                        <Input type="number" placeholder="e.g., 5" {...field} value={field.value ?? ''} />
                       </FormControl>
                        <FormMessage />
                     </FormItem>
