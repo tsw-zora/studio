@@ -83,6 +83,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
     },
   });
 
+  const taskType = form.watch('type');
+
   const handleSuggestSubtasks = async () => {
     const description = form.getValues('description');
     if (!description) {
@@ -135,7 +137,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
 
     addTask({
       ...values,
-      dueDate: values.dueDate ? values.dueDate.toISOString() : undefined,
+      dueDate: values.type === 'daily' ? undefined : values.dueDate?.toISOString(),
       subtasks: finalSubtasks,
     });
 
@@ -232,6 +234,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                               'w-full pl-3 text-left font-normal',
                               !field.value && 'text-muted-foreground'
                             )}
+                            disabled={taskType === 'daily'}
                           >
                             {field.value ? (
                               format(field.value, 'PPP')
@@ -247,6 +250,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          disabled={taskType === 'daily'}
                           initialFocus
                         />
                       </PopoverContent>
