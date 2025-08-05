@@ -2,7 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export type StatusFilter = 'all' | 'incomplete' | 'completed';
+export type StatusFilter = 'all' | 'active' | 'overdue' | 'completed';
 
 interface TaskFiltersProps {
   currentFilter: StatusFilter;
@@ -19,8 +19,9 @@ export function TaskFilters({
       onValueChange={(value) => onFilterChange(value as StatusFilter)}
     >
       <TabsList>
-        <TabsTrigger value="all">All Tasks</TabsTrigger>
-        <TabsTrigger value="incomplete">Incomplete</TabsTrigger>
+        <TabsTrigger value="all">All</TabsTrigger>
+        <TabsTrigger value="active">Active</TabsTrigger>
+        <TabsTrigger value="overdue">Overdue</TabsTrigger>
         <TabsTrigger value="completed">Completed</TabsTrigger>
       </TabsList>
     </Tabs>

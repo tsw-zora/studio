@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { isPast } from 'date-fns';
 import { TaskFlowLogo } from '@/components/task-flow-logo';
 import { AddTaskDialog } from '@/components/add-task-dialog';
 import { TaskList } from '@/components/task-list';
@@ -37,7 +38,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
 
 export function TaskFlowPage() {
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('incomplete');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('active');
 
   const addTask = (task: Omit<Task, 'id' | 'completed' | 'completedAt'>) => {
     const newTask: Task = {
@@ -90,8 +91,11 @@ export function TaskFlowPage() {
     return tasks
       .filter((task) => {
         if (statusFilter === 'completed') return task.completed;
-        if (statusFilter === 'incomplete') return !task.completed;
-        return true;
+        if (statusFilter === 'active') return !task.completed;
+        if (statusFilter === 'overdue') {
+            return !task.completed && task.dueDate && isPast(new Date(task.dueDate));
+        }
+        return true; // for 'all'
       })
       .sort((a, b) => (a.completed ? 1 : -1) - (b.completed ? 1 : -1) || (new Date(b.dueDate || 0).getTime() - new Date(a.dueDate || 0).getTime()));
   }, [tasks, statusFilter]);

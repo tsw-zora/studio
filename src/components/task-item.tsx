@@ -68,7 +68,7 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
   const isOverdue = task.dueDate && !task.completed && isPast(new Date(task.dueDate));
 
   return (
-    <Card className={cn('transition-all', task.completed && 'bg-muted/50')}>
+    <Card className={cn('transition-all duration-300', task.completed && 'opacity-50 scale-[0.98]')}>
       <CardHeader className="flex flex-row items-start gap-4 space-y-0 pb-4">
         <Checkbox
           id={`task-${task.id}`}
