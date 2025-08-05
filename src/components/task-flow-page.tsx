@@ -37,7 +37,7 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
 
 export function TaskFlowPage() {
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('incomplete');
 
   const addTask = (task: Omit<Task, 'id' | 'completed' | 'completedAt'>) => {
     const newTask: Task = {
@@ -49,9 +49,37 @@ export function TaskFlowPage() {
   };
 
   const updateTask = (id: string, updates: Partial<Task>) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, ...updates } : task))
-    );
+    setTasks((prevTasks) => {
+      const newTasks = [...prevTasks];
+      const taskIndex = newTasks.findIndex((task) => task.id === id);
+      if (taskIndex === -1) return prevTasks;
+  
+      const originalTask = newTasks[taskIndex];
+      const updatedTask = { ...originalTask, ...updates };
+      newTasks[taskIndex] = updatedTask;
+  
+      if (
+        updates.completed &&
+        originalTask.isRecurring &&
+        (originalTask.repetitions ?? 0) > 0
+      ) {
+        const newRepetitions = (originalTask.repetitions ?? 1) - 1;
+
+        if (newRepetitions > 0) {
+            const newTask: Task = {
+                ...originalTask,
+                id: uuidv4(),
+                completed: false,
+                completedAt: undefined,
+                repetitions: newRepetitions,
+                subtasks: originalTask.subtasks.map(sub => ({...sub, completed: false})),
+            };
+            newTasks.push(newTask);
+        }
+      }
+  
+      return newTasks;
+    });
   };
 
   const deleteTask = (id: string) => {
