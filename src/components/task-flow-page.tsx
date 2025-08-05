@@ -1,14 +1,16 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { isPast } from 'date-fns';
-import { TaskFlowLogo } from '@/components/task-flow-logo';
+import { DoITLogo } from '@/components/doit-logo';
+import { Button } from '@/components/ui/button';
 import { AddTaskDialog } from '@/components/add-task-dialog';
 import { TaskList } from '@/components/task-list';
 import { AnalyticsDashboard } from '@/components/analytics-dashboard';
 import { TaskFilters, type StatusFilter } from '@/components/task-filters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/hooks/use-toast';
 import type { Task } from '@/lib/types';
 
 function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
@@ -47,6 +49,64 @@ function useLocalStorage<T>(key: string, initialValue: T): [T, React.Dispatch<Re
 export function TaskFlowPage() {
   const [tasks, setTasks] = useLocalStorage<Task[]>('tasks', []);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('active');
+  const { toast } = useToast();
+  const importFileInput = useRef<HTMLInputElement>(null);
+
+  const exportTasks = () => {
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(tasks, null, 2)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "task-progress.json";
+
+    link.click();
+    toast({
+      title: "Success",
+      description: "Your tasks have been exported.",
+    });
+  };
+
+  const importTasks = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (typeof text !== 'string') {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not read file.",
+        });
+        return;
+      }
+      try {
+        const tasksToImport = JSON.parse(text);
+        // Basic validation
+        if (!Array.isArray(tasksToImport) || !tasksToImport.every(task => 'id' in task && 'title' in task)) {
+          throw new Error("Invalid file format.");
+        }
+        setTasks(tasksToImport);
+        toast({
+          title: "Success",
+          description: "Your tasks have been imported.",
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not import tasks. Invalid JSON file.",
+        });
+      }
+    };
+    reader.readAsText(file);
+    // Reset file input
+    if (importFileInput.current) {
+      importFileInput.current.value = "";
+    }
+  };
 
   const addTask = (task: Omit<Task, 'id' | 'completed' | 'completedAt'>) => {
     const newTask: Task = {
@@ -113,12 +173,23 @@ export function TaskFlowPage() {
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b">
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
-            <TaskFlowLogo className="h-7 w-7 text-primary" />
+            <DoITLogo className="h-7 w-7 text-primary" />
             <h1 className="text-2xl font-bold font-headline text-foreground">
-              TaskFlow
+              DoIT
             </h1>
           </div>
-          <AddTaskDialog addTask={addTask} />
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={exportTasks}>Export Progress</Button>
+            <Button variant="outline" onClick={() => importFileInput.current?.click()}>Import Progress</Button>
+            <AddTaskDialog addTask={addTask} />
+            <input
+              type="file"
+              ref={importFileInput}
+              className="hidden"
+              accept=".json"
+              onChange={importTasks}
+            />
+          </div>
         </div>
       </header>
 

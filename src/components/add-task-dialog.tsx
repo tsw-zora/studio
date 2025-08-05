@@ -247,7 +247,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <ScrollArea className="h-[65vh]">
-              <div className="space-y-4 pr-6">
+              <div className="space-y-4 px-6">
                 <FormField
                   control={form.control}
                   name="title"
@@ -270,6 +270,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                       <FormControl>
                         <Textarea
                           placeholder="e.g., Research recipes, create a shopping list, and prep ingredients..."
+                          className="resize-none"
                           {...field}
                         />
                       </FormControl>
@@ -343,9 +344,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                           )}
                         />
                     ) : null}
-                  </div>
-                   {taskType === 'scheduled' && (
-                     <div className="grid grid-cols-1">
+                     {taskType === 'scheduled' && (
                         <FormField
                         control={form.control}
                         name="startTime"
@@ -353,14 +352,14 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                           <FormItem>
                             <FormLabel>Start Time (Optional)</FormLabel>
                             <FormControl>
-                              <Input type="time" {...field} value={field.value ?? ''} className="w-full" />
+                              <Input type="time" {...field} value={field.value ?? ''} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                     </div>
                    )}
+                  </div>
 
                 <div className="space-y-2">
                   <Label>Subtasks</Label>
@@ -515,7 +514,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </Collapsible>
               </div>
             </ScrollArea>
-            <DialogFooter className="pt-6 border-t mt-4 pr-6">
+            <DialogFooter className="pt-6 border-t mt-4">
               <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
               <Button type="submit">Save Task</Button>
             </DialogFooter>
