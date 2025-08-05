@@ -17,4 +17,5 @@ export interface Task {
   recurringInterval?: number;
   recurringIntervalUnit?: 'minutes' | 'hours' | 'days';
   repetitions?: number;
+  imageUrl?: string;
 }

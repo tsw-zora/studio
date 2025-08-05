@@ -9,6 +9,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { format, isPast } from 'date-fns';
+import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -87,7 +88,8 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
           {task.description && (
             <CardDescription
               className={cn(
-                task.completed && 'line-through text-muted-foreground'
+                'text-muted-foreground',
+                task.completed && 'line-through'
               )}
             >
               {task.description}
@@ -103,6 +105,11 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
         </Button>
       </CardHeader>
       <CardContent className="pb-4">
+        {task.imageUrl && (
+            <div className="mb-4">
+                <Image src={task.imageUrl} alt={task.title} width={600} height={400} className="rounded-md object-cover aspect-[4/3]" />
+            </div>
+        )}
         {task.subtasks.length > 0 && (
           <Collapsible>
             <Separator className="my-2" />

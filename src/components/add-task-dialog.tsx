@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -13,7 +13,10 @@ import {
   Trash2,
   Loader2,
   Repeat,
+  Image as ImageIcon,
+  X,
 } from 'lucide-react';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -66,6 +69,7 @@ const formSchema = z.object({
   recurringInterval: z.coerce.number().optional(),
   recurringIntervalUnit: z.enum(['minutes', 'hours', 'days']).optional(),
   repetitions: z.coerce.number().optional(),
+  imageUrl: z.string().optional(),
 });
 
 type AddTaskFormValues = z.infer<typeof formSchema>;
@@ -80,6 +84,8 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
   const [newSubtask, setNewSubtask] = useState('');
   const [isSuggesting, setIsSuggesting] = useState(false);
   const { toast } = useToast();
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<AddTaskFormValues>({
     resolver: zodResolver(formSchema),
@@ -90,11 +96,33 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
       recurringInterval: undefined,
       recurringIntervalUnit: undefined,
       repetitions: undefined,
+      imageUrl: undefined,
     },
   });
 
   const taskType = form.watch('type');
   const isRecurring = form.watch('isRecurring');
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setImagePreview(result);
+        form.setValue('imageUrl', result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    form.setValue('imageUrl', undefined);
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+  }
 
   const handleSuggestSubtasks = async () => {
     const description = form.getValues('description');
@@ -174,6 +202,10 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
 
     form.reset();
     setSubtasks([]);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
     setOpen(false);
   };
 
@@ -223,6 +255,26 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                 </FormItem>
               )}
             />
+
+            <div className="space-y-2">
+                <Label>Image (Optional)</Label>
+                <div className="flex items-center gap-2">
+                    <Input id="image-upload" type="file" accept="image/*" onChange={handleImageChange} className="flex-1" ref={fileInputRef} />
+                    <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()}>
+                        <ImageIcon className="mr-2 h-4 w-4" />
+                        Upload
+                    </Button>
+                </div>
+                {imagePreview && (
+                    <div className="relative mt-2">
+                        <Image src={imagePreview} alt="Image preview" width={100} height={100} className="rounded-md object-cover" />
+                        <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={removeImage}>
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
+                )}
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
