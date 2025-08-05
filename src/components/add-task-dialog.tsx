@@ -5,14 +5,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { format, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
+import { format, setHours, setMinutes } from 'date-fns';
 import {
   Plus,
   Calendar as CalendarIcon,
   Sparkles,
   Trash2,
   Loader2,
-  Repeat,
   Image as ImageIcon,
   X,
   ChevronDown,
@@ -348,7 +347,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                     <FormItem>
                     <FormLabel>Start Time (Optional)</FormLabel>
                     <FormControl>
-                        <Input type="time" {...field} />
+                        <Input type="time" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                     </FormItem>
