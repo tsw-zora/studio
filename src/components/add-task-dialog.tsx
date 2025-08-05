@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { format } from 'date-fns';
+import { format, setHours, setMinutes, setSeconds, setMilliseconds } from 'date-fns';
 import {
   Plus,
   Calendar as CalendarIcon,
@@ -72,6 +72,7 @@ const formSchema = z.object({
     required_error: 'Task type is required.',
   }),
   dueDate: z.date().optional(),
+  startTime: z.string().optional(),
   isRecurring: z.boolean().default(false),
   recurringInterval: z.coerce.number().optional(),
   recurringIntervalUnit: z.enum(['minutes', 'hours', 'days']).optional(),
@@ -190,6 +191,17 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
       }
     }
 
+    let finalDueDate: string | undefined = undefined;
+    if (values.type === 'scheduled' && values.dueDate) {
+      let date = values.dueDate;
+      if (values.startTime) {
+        const [hours, minutes] = values.startTime.split(':');
+        date = setMinutes(setHours(date, parseInt(hours)), parseInt(minutes));
+      }
+      finalDueDate = date.toISOString();
+    }
+
+
     const finalSubtasks = subtasks.map((title) => ({
       id: uuidv4(),
       title,
@@ -198,7 +210,7 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
 
     addTask({
       ...values,
-      dueDate: values.type === 'daily' ? undefined : values.dueDate?.toISOString(),
+      dueDate: finalDueDate,
       subtasks: finalSubtasks,
     });
 
@@ -285,47 +297,64 @@ export function AddTaskDialog({ addTask }: AddTaskDialogProps) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="dueDate"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Due Date</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              'w-full pl-3 text-left font-normal',
-                              !field.value && 'text-muted-foreground'
-                            )}
-                            disabled={taskType === 'daily'}
-                          >
-                            {field.value ? (
-                              format(field.value, 'PPP')
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={taskType === 'daily'}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+               <FormField
+                  control={form.control}
+                  name="dueDate"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Due Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                'w-full pl-3 text-left font-normal',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                              disabled={taskType === 'daily'}
+                            >
+                              {field.value ? (
+                                format(field.value, 'PPP')
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                                date < new Date(new Date().setHours(0, 0, 0, 0)) || taskType === 'daily'
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
             </div>
+             {taskType === 'scheduled' && (
+                <FormField
+                control={form.control}
+                name="startTime"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Start Time (Optional)</FormLabel>
+                    <FormControl>
+                        <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+            )}
             
             <div className="space-y-2">
               <Label>Subtasks</Label>

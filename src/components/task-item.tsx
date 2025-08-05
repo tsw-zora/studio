@@ -66,6 +66,9 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
       : 0;
   
   const isOverdue = task.dueDate && !task.completed && isPast(new Date(task.dueDate));
+  const hasTime = task.dueDate && new Date(task.dueDate).toTimeString() !== '00:00:00 GMT+0000 (Coordinated Universal Time)';
+  const formattedDate = task.dueDate ? format(new Date(task.dueDate), 'MMM d') : 'Scheduled';
+  const formattedTime = hasTime ? format(new Date(task.dueDate!), 'p') : '';
 
   return (
     <Card className={cn('transition-all duration-300', task.completed && 'opacity-50 scale-[0.98]')}>
@@ -167,7 +170,7 @@ export function TaskItem({ task, onUpdateTask, onDeleteTask }: TaskItemProps) {
           ) : (
             <Badge variant="secondary" className="gap-1">
               <CalendarDays className="h-3 w-3" />
-              {task.dueDate ? format(new Date(task.dueDate), 'MMM d') : 'Scheduled'}
+              {formattedDate}{formattedTime && `, ${formattedTime}`}
             </Badge>
           )}
           {isOverdue && <Badge variant="destructive">Overdue</Badge>}
